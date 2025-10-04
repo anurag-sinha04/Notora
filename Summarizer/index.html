@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Summarizer ⚡</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+
+<!-- Docx.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+<canvas id="background"></canvas>
+
+<div class="container">
+    <h1>⚡ AI Summarizer ⚡</h1>
+
+    <textarea id="inputText" placeholder="Paste your text here..." rows="8"></textarea>
+    
+    <div class="upload-row">
+        <label class="custom-file-upload">
+            📄 Upload PDF / Word
+            <input type="file" id="fileInput" accept=".pdf,.docx,.doc">
+        </label>
+        <span id="fileStatus" style="margin-left:10px;"></span>
+    </div>
+
+    <button id="summarizeBtn">📝 Summarize</button>
+
+    <div id="summaryContainer"></div>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
