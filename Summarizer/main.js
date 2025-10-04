@@ -47,19 +47,40 @@ function createSummaryBox(text){
     setupActions(div);
 }
 
-// Smart summarize / elaborate
-function summarizeSmart(text, wordCount){
-    const words = text.split(' ');
-    if(words.length <= wordCount){
-        return text + " ...[Elaborated version]";
-    } else {
-        return words.slice(0, wordCount).join(' ') + '...';
+// Extractive summarizer
+function extractiveSummarize(text, wordLimit){
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    const freq = {};
+    const stopwords = ["the","and","of","to","in","a","is","it","for","on","with","as","by","at","this","that","from","or"];
+    text.toLowerCase().replace(/[^a-z\s]/g,'').split(/\s+/).forEach(word=>{
+        if(!stopwords.includes(word) && word.length>2){
+            freq[word] = (freq[word]||0)+1;
+        }
+    });
+    const scored = sentences.map(s=>{
+        let score=0;
+        s.toLowerCase().split(/\s+/).forEach(w=>{ if(freq[w]) score+=freq[w]; });
+        return {sentence:s, score};
+    });
+    scored.sort((a,b)=>b.score-a.score);
+
+    const summarySentences=[];
+    let totalWords=0;
+    for(const s of scored){
+        const words=s.sentence.split(/\s+/).length;
+        if(totalWords + words <= wordLimit){
+            summarySentences.push(s.sentence.trim());
+            totalWords += words;
+        }
+        if(totalWords >= wordLimit) break;
     }
+    if(summarySentences.length===0) return text; // too short
+    return summarySentences.join(' ');
 }
 
 // Summarize button
 summarizeBtn.onclick = () => {
-    let text = inputText.value.trim();
+    const text = inputText.value.trim();
     if(!text){
         showToast('Enter text or upload file first');
         return;
@@ -69,46 +90,44 @@ summarizeBtn.onclick = () => {
     if(!wordCount || isNaN(wordCount)) wordCount = 50;
     else wordCount = parseInt(wordCount);
 
-    const summary = summarizeSmart(text, wordCount);
+    const summary = extractiveSummarize(text, wordCount);
     createSummaryBox(summary);
 };
 
-// Handle file upload
+// File upload
 fileInput.addEventListener('change', async (e) => {
     const file = e.target.files[0];
     if(!file) return;
     fileStatus.textContent = 'Loading file...';
-
     const ext = file.name.split('.').pop().toLowerCase();
-
     try {
-        if(ext === 'pdf'){
+        if(ext==='pdf'){
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument({data: arrayBuffer}).promise;
-            let fullText = '';
+            let fullText='';
             for(let i=1;i<=pdf.numPages;i++){
                 const page = await pdf.getPage(i);
                 const textContent = await page.getTextContent();
-                fullText += textContent.items.map(item => item.str).join(' ') + '\n';
+                fullText += textContent.items.map(item=>item.str).join(' ') + ' ';
             }
             inputText.value = fullText;
-        } else if(ext === 'docx' || ext === 'doc'){
+        } else if(ext==='docx' || ext==='doc'){
             const reader = new FileReader();
             reader.onload = function(event){
                 const arrayBuffer = event.target.result;
                 mammoth.extractRawText({arrayBuffer}).then(result=>{
-                    inputText.value = result.value;
+                    inputText.value=result.value;
                 });
             }
             reader.readAsArrayBuffer(file);
         } else {
             showToast('Unsupported file type');
         }
-        fileStatus.textContent = 'File loaded';
+        fileStatus.textContent='File loaded';
     } catch(err){
         console.error(err);
         showToast('Failed to read file');
-        fileStatus.textContent = '';
+        fileStatus.textContent='';
     }
 });
 
@@ -116,38 +135,4 @@ fileInput.addEventListener('change', async (e) => {
 const bgCanvas=document.getElementById('background');
 const bgCtx=bgCanvas.getContext('2d');
 bgCanvas.width=window.innerWidth;
-bgCanvas.height=window.innerHeight;
-const particles=[];
-for(let i=0;i<100;i++){
-    particles.push({
-        x:Math.random()*bgCanvas.width,
-        y:Math.random()*bgCanvas.height,
-        radius:Math.random()*2+1,
-        dx:(Math.random()-0.5)*0.5,
-        dy:(Math.random()-0.5)*0.5,
-        alpha:Math.random(),
-        alphaChange:Math.random()*0.02+0.005
-    });
-}
-function drawParticles(){
-    bgCtx.clearRect(0,0,bgCanvas.width,bgCanvas.height);
-    particles.forEach(p=>{
-        p.x+=p.dx; p.y+=p.dy;
-        if(p.x>bgCanvas.width)p.x=0;
-        if(p.x<0)p.x=bgCanvas.width;
-        if(p.y>bgCanvas.height)p.y=0;
-        if(p.y<0)p.y=bgCanvas.height;
-        p.alpha+=p.alphaChange;
-        if(p.alpha>1 || p.alpha<0.2)p.alphaChange*=-1;
-        bgCtx.beginPath();
-        bgCtx.arc(p.x,p.y,p.radius,0,Math.PI*2);
-        bgCtx.fillStyle=`rgba(0,200,255,${p.alpha})`;
-        bgCtx.fill();
-    });
-    requestAnimationFrame(drawParticles);
-}
-drawParticles();
-window.addEventListener('resize',()=>{
-    bgCanvas.width=window.innerWidth;
-    bgCanvas.height=window.innerHeight;
-});
+bgCanvas.height=window.inner
