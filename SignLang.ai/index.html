@@ -8,7 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-900 text-white antialiased">
+<body class="bg-slate-900 text-white antialiased overflow-y-auto">
 
 <header class="container mx-auto px-6 py-4 flex justify-between items-center">
   <div class="flex items-center space-x-2">
@@ -18,8 +18,10 @@
 
 <main class="container mx-auto px-6 md:py-20">
   <section class="text-center relative hero-gradient rounded-3xl p-4 md:p-8 overflow-hidden">
-
-
+    <!-- Floating blobs -->
+    <span></span>
+    <span></span>
+    <span></span>
 
     <div class="hero-gradient-content max-w-4xl mx-auto relative z-10">
       <h1 class="text-4xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-blue-300">
@@ -30,6 +32,8 @@
       </p>
 
       <div class="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-6xl mx-auto">
+
+        <!-- Text Input -->
         <div class="bg-slate-800/50 backdrop-blur-sm p-6 rounded-2xl shadow-lg border border-slate-700">
           <label for="text-input" class="block mb-2 font-medium text-slate-300">Enter text to translate:</label>
           <textarea id="text-input" rows="8" class="w-full bg-slate-900 rounded-lg p-4 border border-slate-600 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all resize-none" placeholder="For example: hello world how are you"></textarea>
@@ -41,18 +45,19 @@
           </button>
         </div>
 
-        <div class="video-box bg-black rounded-2xl aspect-video w-full flex flex-col items-center justify-center p-4 border border-slate-700 shadow-2xl">
-          <div id="video-display" class="text-center mb-4">
-            <video autoplay muted class="w-full h-auto rounded-lg shadow-lg"></video>
-            <p class="text-slate-500 absolute inset-0 flex items-center justify-center">Avatar will appear here</p>
+        <!-- Avatar Video Card -->
+        <div class="video-box flex flex-col items-center justify-center p-6 border border-slate-700 shadow-2xl overflow-auto">
+          <div id="video-display" class="relative w-full h-96 md:h-[500px] flex items-center justify-center">
+            <video autoplay muted class="w-full h-full rounded-xl shadow-lg object-contain"></video>
+            <p>Avatar will appear here</p>
           </div>
-          <button id="loop-button" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300">
+          <button id="loop-button" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300 mt-4">
             Loop Avatar
           </button>
         </div>
+
       </div>
     </div>
-
   </section>
 </main>
 
