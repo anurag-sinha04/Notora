@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Thunder Speech Translator ⚡</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<canvas id="background"></canvas>
+<div class="container">
+    <h1>⚡ Real-Time Speech Translator ⚡</h1>
+
+    <div class="lang-row">
+        <div class="lang-select">
+            <label for="source_lang">Source:</label>
+            <select id="source_lang">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="te">Telugu</option>
+                <option value="kn">Kannada</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+            </select>
+        </div>
+        <div class="lang-select">
+            <label for="target_lang">Target:</label>
+            <select id="target_lang">
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="te">Telugu</option>
+                <option value="kn">Kannada</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="de">German</option>
+            </select>
+        </div>
+    </div>
+
+    <button id="startBtn">
+        🎙️ Listening
+        <div class="mic-bars">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </button>
+
+    <div class="text-box" id="original-box">
+        <div class="text-actions">
+            <span class="icon copy-icon" title="Copy"></span>
+            <span class="icon listen-icon" title="Listen"></span>
+        </div>
+        <h3>Original Text</h3>
+        <div id="originalText"></div>
+    </div>
+
+    <div class="text-box" id="translated-box">
+        <div class="text-actions">
+            <span class="icon copy-icon" title="Copy"></span>
+            <span class="icon listen-icon" title="Listen"></span>
+        </div>
+        <h3>Translated Text</h3>
+        <div id="translatedText"></div>
+    </div>
+
+    <div id="summarize-container" style="margin-top:10px;"></div>
+    <div id="summary-container"></div>
+
+    <canvas id="visualizer" width="400" height="100"></canvas>
+</div>
+
+<script src="{{ url_for('static', filename='main.js') }}"></script>
+</body>
+</html>
