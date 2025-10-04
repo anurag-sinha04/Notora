@@ -16,12 +16,10 @@
   </div>
 </header>
 
-<main class="container mx-auto px-6  md:py-20">
+<main class="container mx-auto px-6 md:py-20">
   <section class="text-center relative hero-gradient rounded-3xl p-4 md:p-8 overflow-hidden">
 
-    <span></span>
-    <span></span>
-    <span></span>
+
 
     <div class="hero-gradient-content max-w-4xl mx-auto relative z-10">
       <h1 class="text-4xl md:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-100 to-blue-300">
@@ -38,11 +36,15 @@
           <button id="translate-button" class="mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 active:scale-95 disabled:bg-slate-500 disabled:cursor-not-allowed">
             Translate
           </button>
+          <button id="stop-button" class="mt-2 w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition-all duration-300 active:scale-95 disabled:bg-slate-500 disabled:cursor-not-allowed">
+            Stop Translation
+          </button>
         </div>
 
         <div class="video-box bg-black rounded-2xl aspect-video w-full flex flex-col items-center justify-center p-4 border border-slate-700 shadow-2xl">
           <div id="video-display" class="text-center mb-4">
-            <p class="text-slate-500">Avatar will appear here</p>
+            <video autoplay muted class="w-full h-auto rounded-lg shadow-lg"></video>
+            <p class="text-slate-500 absolute inset-0 flex items-center justify-center">Avatar will appear here</p>
           </div>
           <button id="loop-button" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300">
             Loop Avatar

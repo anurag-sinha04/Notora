@@ -1,35 +1,46 @@
 const textInput = document.getElementById('text-input');
 const translateButton = document.getElementById('translate-button');
+const stopButton = document.getElementById('stop-button');
 const videoDisplay = document.getElementById('video-display');
-const hero = document.querySelector('.hero-gradient');
-const heroContent = document.querySelector('.hero-gradient-content');
 const loopButton = document.getElementById('loop-button');
+
 let isTranslating = false;
+let isPaused = false;
+let currentIndex = 0;
+let sequence = [];
 let isLooping = false;
 
-// Mouse-follow gradient
-document.addEventListener('mousemove', (e) => {
-  const rect = hero.getBoundingClientRect();
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  hero.style.setProperty('--x', `${x}px`);
-  hero.style.setProperty('--y', `${y}px`);
+// Single video element
+const videoElement = videoDisplay.querySelector('video');
+const placeholderText = videoDisplay.querySelector('p');
 
-  // Slight tilt effect
-  const rotateX = ((y / rect.height) - 0.5) * 10;
-  const rotateY = ((x / rect.width) - 0.5) * 10;
-  heroContent.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-});
-
-// Toggle looping
+// Loop toggle
 loopButton.addEventListener('click', () => {
   isLooping = !isLooping;
   loopButton.textContent = isLooping ? 'Stop Loop' : 'Loop Avatar';
 });
 
-// Check if video exists
+// Stop / Pause
+stopButton.addEventListener('click', () => {
+  isPaused = true;
+  videoElement.pause();
+  translateButton.textContent = 'Resume';
+});
+
+// Start / Resume
+translateButton.addEventListener('click', () => {
+  if (!isTranslating && sequence.length === 0) {
+    startTranslation();
+  } else if (isPaused) {
+    isPaused = false;
+    playSequence(currentIndex);
+    translateButton.textContent = 'Translating...';
+  }
+});
+
+// Check video exists
 function checkVideoExists(path) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', path, true);
     xhr.onload = () => resolve(xhr.status !== 404);
@@ -38,69 +49,85 @@ function checkVideoExists(path) {
   });
 }
 
-// Play video (.mp4 or .webm)
-async function playSignVideo(name) {
+// Get video path for word/letter
+async function getVideoPath(name) {
   const formats = ['.mp4', '.webm'];
   for (const ext of formats) {
     const path = `videos/${name.toLowerCase()}${ext}`;
-    const exists = await checkVideoExists(path);
-    if (exists) {
-      const video = document.createElement('video');
-      video.src = path;
-      video.autoplay = true;
-      video.controls = false;
-      video.muted = false;
-      video.loop = isLooping;
-      video.className = "w-full h-auto rounded-lg shadow-lg";
-
-      videoDisplay.innerHTML = "";
-      videoDisplay.appendChild(video);
-
-      return new Promise((resolve) => {
-        video.onended = () => resolve(true);
-        video.onerror = () => resolve(false);
-      });
-    }
+    if (await checkVideoExists(path)) return path;
   }
-  return false;
+  return null;
 }
 
-// Main translation logic
-async function handleTranslation() {
-  if (isTranslating) return;
+// Prepare sequence
+async function prepareSequence(text) {
+  const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
+  const seq = [];
+  for (const word of words) {
+    const path = await getVideoPath(word);
+    if (path) seq.push(path);
+    else {
+      for (const letter of word.toUpperCase()) {
+        const letterPath = await getVideoPath(letter);
+        if (letterPath) seq.push(letterPath);
+      }
+    }
+  }
+  return seq;
+}
 
+// Play sequence from currentIndex
+async function playSequence(startIndex = 0) {
+  placeholderText.style.display = 'none'; // hide placeholder during playback
+  for (let i = startIndex; i < sequence.length; i++) {
+    if (isPaused) {
+      currentIndex = i;
+      return;
+    }
+    currentIndex = i;
+    videoElement.src = sequence[i];
+    videoElement.loop = isLooping;
+    try { await videoElement.play(); } 
+    catch (e) { console.error("Video play error:", e); continue; }
+    await new Promise(resolve => {
+      const onEnd = () => { videoElement.removeEventListener('ended', onEnd); resolve(true); };
+      videoElement.addEventListener('ended', onEnd);
+    });
+  }
+
+  // End of sequence — reset
+  videoElement.pause();
+  videoElement.src = '';
+  placeholderText.style.display = 'flex'; // show placeholder again
+  isTranslating = false;
+  sequence = [];
+  translateButton.textContent = 'Translate';
+}
+
+// Start translation
+async function startTranslation() {
   const text = textInput.value.trim();
   if (!text) {
-    videoDisplay.innerHTML = `<p class="text-amber-400">Please enter some text first.</p>`;
+    placeholderText.textContent = "Please enter some text first.";
+    placeholderText.style.display = 'flex';
     return;
   }
 
   isTranslating = true;
+  isPaused = false;
+  currentIndex = 0;
   translateButton.disabled = true;
   translateButton.textContent = 'Translating...';
 
-  const words = text.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/);
-
-  for (const word of words) {
-    const playedWord = await playSignVideo(word);
-    if (!playedWord) {
-      for (const letter of word.toUpperCase()) {
-        await playSignVideo(letter);
-      }
-    }
-  }
-
-  videoDisplay.innerHTML = `<p class="text-green-400 font-bold text-lg">Translation Complete ✅</p>`;
-  isTranslating = false;
+  sequence = await prepareSequence(text);
   translateButton.disabled = false;
-  translateButton.textContent = 'Translate';
+  await playSequence(0);
 }
 
-// Event listeners
-translateButton.addEventListener('click', handleTranslation);
+// Ctrl+Enter to start
 textInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault();
-    handleTranslation();
+    startTranslation();
   }
 });
