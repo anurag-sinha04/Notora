@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notora - Null Void AI Hub</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
+<style>
+  body {
+    overflow-x: hidden;
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(circle at top, #0f0f15, #06060a);
+    color: #fff;
+    position: relative;
+    transform: scale(0.95); /* Slight zoom out */
+    transform-origin: top center;
+  }
+
+  /* Glowing star background */
+  .star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: white;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: twinkle 3s infinite alternate;
+  }
+  @keyframes twinkle {
+    0% {opacity: 0.3;}
+    50% {opacity: 1;}
+    100% {opacity: 0.3;}
+  }
+
+  /* Card styles */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transform-style: preserve-3d;
+    min-height: 240px;
+    width: 100%;
+  }
+  .card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 25px #8b5cf6, 0 0 50px #6366f1;
+  }
+  .card img {
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  .card:hover img {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 12px #8b5cf6);
+  }
+
+  .card-title {
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  /* Light trail cursor effect */
+  .light-trail {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle, rgba(147,51,234,0.5) 0%, rgba(147,51,234,0) 70%);
+    transition: transform 0.1s ease;
+  }
+
+  .fade-in {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s forwards;
+  }
+  @keyframes fadeInUp {
+    to {opacity:1; transform:translateY(0);}
+  }
+
+  /* Adjust grid for wider layout */
+  .grid-custom {
+    grid-template-columns: repeat(2, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 1024px) {
+    .grid-custom {grid-template-columns: 1fr;}
+  }
+
+  @media (max-width: 768px) {
+    .grid-custom {grid-template-columns: 1fr;}
+  }
+
+  /* Move main frame slightly upward */
+  main {
+    margin-top: -40px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Stars -->
+<script>
+  for(let i=0;i<100;i++){
+    let star = document.createElement('div');
+    star.className='star';
+    star.style.top=Math.random()*100+'%';
+    star.style.left=Math.random()*100+'%';
+    star.style.width=star.style.height=(Math.random()*2+1)+'px';
+    document.body.appendChild(star);
+  }
+</script>
+
+<!-- Light trail -->
+<div id="lightTrail" class="light-trail"></div>
+
+<!-- Header -->
+<header class="text-center py-4 relative z-10">
+  <h1 class="text-4xl md:text-5xl font-bold text-purple-400 fade-in" style="text-shadow: 0 0 10px #8b5cf6;">Notora: Null Void AI Hub</h1>
+  <p class="text-gray-300 mt-2 fade-in" style="animation-delay:0.3s;">All-in-one AI tools for accessibility & productivity</p>
+</header>
+
+<!-- Main Frame -->
+<main class="flex-grow container mx-auto px-4 py-8 relative z-10">
+  <div class="max-w-6xl mx-auto bg-gray-900 bg-opacity-60 rounded-3xl p-6 md:p-10 shadow-2xl border border-gray-700">
+    <h2 class="text-2xl md:text-3xl font-semibold mb-10 text-center fade-in text-pink-400" style="animation-delay:0.6s;">Choose a tool</h2>
+
+    <div class="grid grid-cols-2 gap-6 md:gap-8 grid-custom">
+
+      <!-- Card 1 -->
+      <a href="SignLang.ai/index.html" class="card bg-gray-800 rounded-2xl p-6 md:p-8 flex flex-col items-center cursor-pointer border border-purple-500">
+        <img src="https://img.icons8.com/fluency/120/ffffff/hand.png" alt="Sign Language" class="mb-3 md:mb-4 w-24 h-24 md:w-28 md:h-28">
+        <h3 class="card-title text-lg md:text-xl font-bold mb-1 md:mb-2 text-purple-400">SignLang.AI</h3>
+        <p class="text-gray-300 text-center text-xs md:text-sm">Convert text into sign language animations.</p>
+      </a>
+
+      <!-- Card 2 -->
+      <a href="http://127.0.0.1:5000" class="card bg-gray-800 rounded-2xl p-6 md:p-8 flex flex-col items-center cursor-pointer border border-green-500">
+        <img src="https://img.icons8.com/fluency/120/ffffff/microphone.png" alt="Speech Translate" class="mb-3 md:mb-4 w-24 h-24 md:w-28 md:h-28">
+        <h3 class="card-title text-lg md:text-xl font-bold mb-1 md:mb-2 text-green-400">Speech Translator</h3>
+        <p class="text-gray-300 text-center text-xs md:text-sm">Translate live speech into multiple languages and summarize it.</p>
+      </a>
+
+      <!-- Card 3 -->
+      <a href="https://drive.google.com/file/d/1e88QFcQVfaStTkPAqkkMSQsrWyQQKVnk/view?usp=drivesdk " class="card bg-gray-800 rounded-2xl p-6 md:p-8 flex flex-col items-center cursor-pointer border border-blue-500">
+        <img src="https://img.icons8.com/fluency/120/ffffff/video.png" alt="Sign to Text" class="mb-3 md:mb-4 w-24 h-24 md:w-28 md:h-28">
+        <h3 class="card-title text-lg md:text-xl font-bold mb-1 md:mb-2 text-blue-400">Sign to Text</h3>
+        <p class="text-gray-300 text-center text-xs md:text-sm">Convert sign language videos into readable text.</p>
+      </a>
+
+      <!-- Card 4 -->
+      <a href="Summarizer/index.html" class="card bg-gray-800 rounded-2xl p-6 md:p-8 flex flex-col items-center cursor-pointer border border-pink-500">
+        <img src="https://img.icons8.com/fluency/120/ffffff/document.png" alt="Text Summarizer" class="mb-3 md:mb-4 w-24 h-24 md:w-28 md:h-28">
+        <h3 class="card-title text-lg md:text-xl font-bold mb-1 md:mb-2 text-pink-400">Text Summarizer & Notes</h3>
+        <p class="text-gray-300 text-center text-xs md:text-sm">Generate concise summaries or structured notes from any text.</p>
+      </a>
+
+    </div>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="text-gray-400 text-center py-6 relative z-10">
+  <p>&copy; Developed By Team Null Void at Hackathon</p>
+</footer>
+
+<!-- Light trail JS -->
+<script>
+  const light = document.getElementById('lightTrail');
+  document.addEventListener('mousemove', e=>{
+    light.style.transform=`translate(${e.clientX-50}px,${e.clientY-50}px)`;
+  });
+</script>
+
+</body>
+</html>
